@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Bootstrap -->
+<link href="/node_modules/gentelella/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link href="/node_modules/gentelella/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+<!-- Custom Theme Style -->
+<link href="/node_modules/gentelella/build/css/custom.css" rel="stylesheet">
+<script src="/node_modules/gentelella/vendors/jquery/dist/jquery.min.js"></script>
+<title>AIO</title>
+
+<style>
+    label {
+        font-size: 15px;
+    }
+    .myInfo { font-size: 15px;}
+
+    .mg-3 {
+        margin: 0.5em;
+    }
+    #changePWDialog {
+        position: fixed;
+        z-index: 9999999;
+        width: 500px;
+        display: none;
+        border: 1px solid #372c81;
+        top: 40%;
+        left: 40%;
+    }
+    .fa-close {
+        color: #777777;
+    }
+    .text-red {
+        color: red;
+    }
+</style>
+</head>
+<body class="nav-md">
+<div class="container body">
+    <div class="main_container">
+
+        <div th:replace="thymeleaf/fragments.html :: side-bar"></div>
+
+        <div th:replace="thymeleaf/fragments.html :: top-nav"></div>
+
+        <div class="right_col" role="main">
+            <div>
+                <div class="page-title">
+                    <div class="title_left">
+                        <h3>내 인사 정보</h3>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-8 col-sm-8 col-xs-12">
+                        <div class="x_panel">
+                            <div class="x_title">
+                                <h2>내 정보</h2>
+                                <ul class="nav navbar-right panel_toolbox">
+                                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                    </li>
+                                    <li><a class="close-link"><i class="fa fa-close"></i></a>
+                                    </li>
+                                </ul>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="x_content">
+                                <div class="row">
+                                    <div class="col-md-3 col-sm-3 col-xs-12">
+                                        <div class="profile_img">
+                                            <div id="crop-avatar">
+                                                <img th:if="${!#strings.isEmpty(empl?.photo)}" class="img-responsive avatar-view" th:src="${empl.photo}"
+                                                    width="200px" height="auto"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                        <div class="row mg-3">
+                                            <label class="col-md-3">사원번호</label>
+                                            <span class="col-md-6 myInfo" th:text="${empl.emplId}"></span>
+                                        </div>
+                                        <div class="row mg-3">
+                                            <label class="col-md-3">성명</label>
+                                            <span class="col-md-6 myInfo" th:text="${empl.name}"></span>
+                                        </div>
+                                        <div class="row mg-3">
+                                            <label class="col-md-3">부서명</label>
+                                            <span class="col-md-6 myInfo" th:text="${empl.dept}"></span>
+                                        </div>
+                                        <div class="row mg-3">
+                                            <label class="col-md-3">주민등록 번호</label>
+                                            <span class="col-md-6 myInfo" th:text="${empl.jumin}"></span>
+                                        </div>
+                                        <div class="row mg-3">
+                                            <label class="col-md-3">연락처</label>
+                                            <span class="col-md-6 myInfo" th:text="${empl.phone}"></span>
+                                        </div>
+                                        <div class="row mg-3">
+                                            <label class="col-md-3">Email</label>
+                                            <span class="col-md-6 myInfo" th:text="${empl.email}"></span>
+                                        </div>
+                                        <div class="row mg-3">
+                                            <label class="col-md-3">주소</label>
+                                            <span class="col-md-6 myInfo" th:text="|${empl.address} &#40${empl.post_num}&#41;|"></span>
+                                        </div>
+                                        <div class="row mg-3">
+                                            <label class="col-md-3">재직상태</label>
+                                            <span class="col-md-6 myInfo" th:text="${empl.work_state}"></span>
+                                        </div>
+                                        <div class="row mg-3">
+                                            <label class="col-md-3">입사일자</label>
+                                            <span class="col-md-6 myInfo" th:text="${empl.emplRegdate}"></span>
+                                        </div>
+                                        <div class="row mg-3">
+                                            <label class="col-md-3">퇴사날짜</label>
+                                            <span class="col-md-6 myInfo" th:text="${empl.emplResigdate}"></span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="row mg-3 text-right">
+                                    <a th:attr="onclick=|chkPw()|" class="btn btn-default">비밀번호 수정</a>
+                                    <a th:href="@{/mypage/update}" class="btn btn-default">수정</a>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+        <div id="changePWDialog">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_title cus-title">
+                            <h2>비밀번호 변경</h2>
+                            <ul class="nav navbar-right">
+                                <li><a id="close" class="btn "><i class="fa fa-close"></i></a>
+                                </li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div id="changePWContent" class="x_content">
+                            <form id="frm" method="post" action="/cp">
+                                <div class="form-group mb-lg-5">
+                                    <label class="">현재 비밀번호</label>
+                                    <input class="col-md-7 form-control" type="password" name="originPw" />
+                                    <div th:if="${failed != null}" th:text="${failed}" class="text-red"></div>
+                                </div>
+                                <div class="form-group mb-lg-5">
+                                    <label class="">새 비밀번호</label>
+                                    <input class="col-md-7 form-control" onkeyup="chkNewPw()" pattern="^[a-zA-Z0-9]{8,20}$" oninvalid="invalidMsg(this, '영문자 혹은 숫자 8~20자를 입력해주세요.');" placeholder="영문자 혹은 숫자 8~20자를 입력해주세요." type="password" id="newPw" name="newPw" />
+                                </div>
+                                <div class="form-group mb-lg-5">
+                                    <label class="">비밀번호 확인</label>
+                                    <input class="col-md-7 form-control" onkeyup="chkNewPw()" type="password" id="chkPwInput" />
+                                </div>
+                                <div class="" style="color: red" id="noMatchPw"></div>
+                                <div class="form-group">
+                                    <button class="btn btn-default" type="submit">확인</button>
+                                </div>
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer th:replace="thymeleaf/fragments.html :: footer"></footer>
+
+    </div>
+</div>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var failed = [[${failed}]];
+    if(failed != null) {
+        $("#changePWDialog").show();
+    }
+    /*]]>*/
+</script>
+<script>
+    $(document).ready(function () {
+        $("#close").click(function (){
+            $("#changePWDialog").hide();
+        });
+    });
+
+    function invalidMsg(textbox, message) {
+        if(textbox.validity.patternMismatch){
+            textbox.setCustomValidity(message);
+        }
+        else {
+            textbox.setCustomValidity('');
+        }
+    }
+
+    function chkNewPw() {
+        let newPw = $("#newPw").val();
+        let pw2 = $("#chkPwInput").val();
+        if (newPw == pw2) {
+            $("#noMatchPw").html("");
+        } else {
+            $("#noMatchPw").html("새 비밀번호와 일치하지 않습니다.");
+        }
+    }
+
+    function chkPw() {
+        $("#changePWDialog").show();
+    }
+</script>
+
+
+
+
+
+<!-- Bootstrap -->
+<script src="/node_modules/gentelella/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- Custom Theme Scripts -->
+<script src="/node_modules/gentelella/build/js/custom.min.js"></script>
+</body>
+</html>

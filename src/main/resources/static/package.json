@@ -1,0 +1,19 @@
+{
+  "name": "static",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "bootstrap": "^4.5.3",
+    "gentelella": "^1.4.0",
+    "mark.js": "^8.11.1"
+  },
+  "devDependencies": {
+    "magic-snowflakes": "^4.1.6"
+  },
+  "scripts": {
+    "serve": "node index.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

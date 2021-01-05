@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="kor" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <title>젼표 관리</title>
+        <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+        <link href="/node_modules/gentelella/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/node_modules/gentelella/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+        <link href="/node_modules/gentelella/build/css/custom.css" rel="stylesheet">
+        <script src="/node_modules/gentelella/vendors/jquery/dist/jquery.min.js"></script>
+    </head>
+</head>
+<body class="nav-md">
+<div class="container body">
+    <div class="main_container">
+        <div th:replace="thymeleaf/fragments.html :: side-bar"></div>
+        <div th:replace="thymeleaf/fragments.html :: top-nav"></div>
+
+        <div class="right_col" role="main">
+            <div class="row mb-5">
+                <span class="col-12 text-center">
+                    <strong><h1>전표 관리</h1></strong>
+                    <span class="row form-group">
+                        <div class="col-6"></div>
+                        <h3><i class="fa fas fa-search col-1 mt-5"></i></h3>
+                        <span class="col-4 mt-5">
+                            <form th:action="@{/finance/search/slipmanagement}" method="get">
+                                <input class="form-control" name="keyword" type="search" placeholder="거래처명 또는 작성자명으로 검색해주세요."
+                                       aria-label="Search"/>
+                            </form>
+                        </span>
+                    </span>
+                    <div class="mt-5">
+                        <h4>총 전표 개수</h4>
+                        <strong>
+                            <h3>
+                                <span th:text="${slipList.getTotalElements()}"></span>
+                            </h3>
+                        </strong><br>
+
+
+                        <strong th:text="${keyword}" id="keyword" name="keyword" class="context"></strong>
+                    </div>
+
+                    <div class="text-xl-right">
+                        <h4>현재 페이지</h4>
+                        <span th:text="${slipList.getNumber()+1}"></span> / <span th:text="${slipList.getTotalPages()}"></span>
+                    </div>
+
+                    <div class="row justify-content-center">
+                        <div class="col-5">
+                            <select name="months" class="form-control" id="months" onchange="selectMonth()">
+                                <option disabled selected>조회기간 설정</option>
+                                <option value="1">1개월</option>
+                                <option value="3">3개월</option>
+                                <option value="6">6개월</option>
+                                <option value="12">1년</option>
+                                <option value="24">2년</option>
+                            </select>
+                        </div>
+                    </div>
+                    <strong><h4><span th:text="${todaySlip}"></span></h4></strong>
+                    <em><span th:text="${searchDate}"></span></em> <strong>~</strong> <em><span th:text="${nowDate}"></span></em>
+
+                    <!-- 전표 리스트 -->
+                    <div class="row justify-content-center mt-5">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th style="text-align: center">전표번호</th>
+                                    <th style="text-align: center">등록날짜</th>
+                                    <th style="text-align: center">거래유형</th>
+                                    <th style="text-align: center">계정코드</th>
+                                    <th style="text-align: center">금액</th>
+                                    <th style="text-align: center">거래처명</th>
+                                    <th style="text-align: center">적요</th>
+                                    <th style="text-align: center">작성자</th>
+                                    <th style="text-align: center">Excel</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr th:each="slip : ${slipList}"
+                                    th:onclick="'window.location.href = \'' + @{/finance/statementManagement/{slipId} (slipId=${slip.slipId})} + '\''">
+                                    <td th:text="${slip.slipId}"></td>
+                                    <td th:text="${slip.slipDate}"></td>
+                                    <td th:text="${slip.tradingType}"></td>
+                                    <td th:text="${slip.slipCode}"></td>
+                                    <td th:text="${slip.slip_account}"></td>
+                                    <td class="context" th:text="${slip.corp}"></td>
+                                    <td th:text="${slip.slip_summary}"></td>
+                                    <td class="context" th:text="${slip.slipWrite}"></td>
+                                    <td>
+                                         <a class="text-info"  th:href="@{/finance/downloadExcel(slipId=${slip.slipId})}">download</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- 페이징 -->
+                    <div class="row justify-content-center mt-5">
+                        <div class="col-sm-10">
+                            <nav>
+                                <ul class="pagination justify-content-center">
+                                    <li class="page-item" th:classappend="${!slipList.hasPrevious()}? disabled">
+                                        <a th:href="@{'/finance/search/slipmanagement?keyword=' + ${keyword} + '&page=' + ${slipList.getNumber() - 1}}"
+                                           class="page-link" tabindex="-1" aria-disabled="true">
+                                            Previous
+                                        </a>
+                                    </li>
+                                    <li class="page-item" th:classappend="${i == slipList.getNumber()}? active"
+                                        th:each="i: ${#numbers.sequence(0, slipList.getTotalPages() - 1)}">
+                                        <a th:href="@{'/finance/search/slipmanagement?keyword=' + ${keyword} + '&page=' + ${i}}"
+                                           class="page-link" href="#" th:text="${i + 1}">1</a>
+                                    </li>
+                                    <li class="page-item" th:classappend="${!slipList.hasNext()}? disabled">
+                                        <a th:href="@{'/finance/search/slipmanagement?keyword=' + ${keyword} + '&page=' + ${slipList.getNumber() + 1}}"
+                                           class="page-link">
+                                            Next
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </span>
+            </div>
+        </div>
+        <footer th:replace="thymeleaf/fragments.html :: footer"></footer>
+    </div>
+</div>
+</body>
+<script src="/node_modules/mark.js/dist/jquery.mark.min.js"></script>
+<script type="application/javascript">
+    $(function () {
+        var mark = function () {
+            // Read the keyword
+            var keyword = $("#keyword").text();
+
+            var options = {
+                "each": function (element) {
+                    setTimeout(function () {
+                        $(element).addClass("text-danger");
+                    }, 150);
+                }
+            };
+            // Mark the keyword inside the context
+            $(".context").unmark({
+                done: function () {
+                    $(".context").mark(keyword, options);
+                }
+            });
+        };
+        mark();
+    });
+
+    function selectMonth() {
+        var monthSelect = document.getElementById("months");
+        var months = monthSelect.options[document.getElementById("months").selectedIndex].value;
+        location.href = "/finance/statementManagement/list?months=" + months;
+    }
+</script>
+<!-- Bootstrap -->
+<script src="/node_modules/gentelella/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- Custom Theme Scripts -->
+<script src="/node_modules/gentelella/build/js/custom.min.js"></script>
+
+</body>
+</html>
